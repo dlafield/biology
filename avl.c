@@ -3,12 +3,9 @@
 #include "avl.h"
 #endif
 
-#ifndef _AVL_TYPE_
-#define _AVL_TYPE_ 1
-
 /*************************************************************************/
 
-AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2))
+AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2), void (*destroyPtr)(void *dataPtr))
 {
 	/*
 		Allocates dynamic memory for an AVL tree head node.
@@ -22,6 +19,7 @@ AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2))
         tree->root = NULL;
         tree->count = 0;
         tree->compare = compare;
+		tree->destroyPtr = destroyPtr;
     }
 
     return tree;
@@ -306,7 +304,7 @@ int AVL_Delete (AVL_TREE *tree, void *dltKey)
     AVL_NODE *newRoot;
 
 	/* delete the target node from the root node using the recursive delete function */
-    newRoot = AVL__delete(tree, tree->root, dltKey, shorter, &success);
+    newRoot = AVL__delete(tree, tree->root, dltKey, &shorter, &success);
 
 	/* if successful, then decriment the count */
     if(success)
@@ -369,6 +367,7 @@ AVL_NODE *AVL__delete(AVL_TREE *tree, AVL_NODE *root, void *dltKey, int *shorter
             newRoot = root->left;
             *success = TRUE;
             *shorter = TRUE;
+			tree->destroyPtr(dltPtr);
             free(dltPtr);
             return newRoot;
 
@@ -380,6 +379,7 @@ AVL_NODE *AVL__delete(AVL_TREE *tree, AVL_NODE *root, void *dltKey, int *shorter
                 newRoot = root->right;
                 *success = TRUE;
                 *shorter = TRUE;
+				tree->destroyPtr(dltPtr);
                 free(dltPtr);
                 return newRoot;
 
@@ -674,30 +674,31 @@ AVL_TREE *AVL_Destroy(AVL_TREE *tree)
 	/* frees memory taken up by tree */
 
 	/* internal prototype declaration */
-    void AVL__destroyAVL(AVL_NODE *root);
+    void AVL__destroyAVL(AVL_TREE *tree, AVL_NODE *root);
 
     if(tree)
-        AVL__destroyAVL(tree->root);
+        AVL__destroyAVL(tree, tree->root);
     free(tree);
     return NULL;
 } /* avl destroy */
 
 /*************************************************************************/
 
-void AVL__destroyAVL(AVL_NODE *root)
+void AVL__destroyAVL(AVL_TREE *tree, AVL_NODE *root)
 {
 	/* recursively frees memory taken up by tree */
 
     if(root)
     {
 		/* free the left tree */
-        AVL__destroyAVL(root->left);
+        AVL__destroyAVL(tree, root->left);
 
 		/* free the data in current node */
+		tree->destroyPtr(root->dataPtr);
         free(root->dataPtr);
 
 		/* free the right tree */
-        AVL__destroyAVL(root->right);
+        AVL__destroyAVL(tree, root->right);
 
 		/* destroy the root */
         free(root);
@@ -732,7 +733,82 @@ void AVL__traversal_string(AVL_NODE *root, void(*process) (void *dataPtr, char s
 } /* AVL__traversal_string */
 
 /*************************************************************************/
-/*************************************************************************/
+
+void *AVL_getAny(AVL_TREE tree)
+{
+	/* if tree is empty, return NULL */
+	if(tree.root == NULL)
+		return NULL;
+
+	/* return data in root */
+	return (tree.root->dataPtr);
+
+} /* get any */
+
 /*************************************************************************/
 
-#endif
+void *AVL_getFirst(AVL_TREE tree)
+{
+	 AVL_NODE *root;
+
+	/* if tree is empty, return NULl */
+	if(tree.root == NULL)
+		return NULL;
+
+	 /* find data in left-most node */
+	 root = tree.root;
+	 while(root->left != NULL)
+		 root = root->left;
+
+	 return (root->dataPtr);
+
+} /* get first */
+
+/*************************************************************************/
+
+void *AVL_getLast(AVL_TREE tree)
+{
+	 AVL_NODE *root;
+
+	/* if tree is empty, return NULl */
+	if(tree.root == NULL)
+		return NULL;
+
+	 /* find data in left-most node */
+	 root = tree.root;
+	 while(root->right != NULL)
+		 root = root->right;
+
+	 return (root->dataPtr);
+
+} /* get last */
+
+/*************************************************************************/
+
+void AVL_traverse_int(AVL_TREE *tree, void(*process)(void *dataPtr, void *auxPtr, int *x), void *auxPtr, int *x)
+{
+	/* visit each node in the tree with a function that the user passes in */
+
+	/* internal prototype declaration */
+    void AVL__traversal_int(AVL_NODE *root, void(*process)(void *dataPtr, void *auxPtr, int x), void *auxPtr, int *x);
+
+    AVL__traversal_int(tree->root, process, auxPtr, x);
+    return;
+} /* avl traverse with string */
+
+/*************************************************************************/
+
+void AVL__traversal_int(AVL_NODE *root, void(*process)(void *dataPtr, void *auxPtr, int x), void *auxPtr, int *x)
+{
+	/* recursively visit each node in the tree with a function that the user passes in which can manipulate a string */
+
+    if(root)
+    {
+        AVL__traversal_int(root->left, process, auxPtr, x);
+        process(root->dataPtr, auxPtr, x);
+        AVL__traversal_int(root->right, process, auxPtr, x);
+    }
+} /* AVL__traversal_string */
+
+/*************************************************************************/
+/*************************************************************************/

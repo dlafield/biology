@@ -30,6 +30,7 @@ typedef struct
 {
     int count;
     int (*compare)(void *argu1, void *argu2);
+	void (*destroyPtr)(void *dataPtr);
     AVL_NODE *root;
 } AVL_TREE;
 
@@ -37,11 +38,16 @@ typedef struct
 
 /* prototypes */
 int AVL_Count(AVL_TREE *tree);
-AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2));
+AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2), void (*destroyPtr)(void *dataPtr));
+int AVL_Delete (AVL_TREE *tree, void *dltKey);
 AVL_TREE *AVL_Destroy(AVL_TREE *tree);
 int AVL_Empty(AVL_TREE *tree);
 int AVL_Full(AVL_TREE *node);
+void *AVL_getAny(AVL_TREE tree);
+void *AVL_getFirst(AVL_TREE tree);
+void *AVL_getLast(AVL_TREE tree);
 int AVL_Insert(AVL_TREE *tree, void *dataInPtr);
 void *AVL_Retrieve(AVL_TREE *tree, void *keyPtr);
 void AVL_traverse(AVL_TREE *tree, void(*process)(void *dataPtr));
+void AVL_traverse_int(AVL_TREE *tree, void(*process)(void *dataPtr, void *auxPtr, int *x), void *auxPtr, int *x);
 void AVL_traverse_string(AVL_TREE *tree, void(*process)(void *dataPtr, char stringInVisit[]), char stringFromOut[]);
