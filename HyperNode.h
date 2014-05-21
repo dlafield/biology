@@ -16,7 +16,7 @@
 #endif
 
 #ifndef _AVL_TYPE_H_
-#define _AVL_TYPE_H_1
+#define _AVL_TYPE_H_ 1
 #include "avl.h"
 #endif
 

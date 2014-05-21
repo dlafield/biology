@@ -138,7 +138,9 @@ void HyperEdge_toString(HyperEdgeType hEdge, char retString[])
 		retString[strlen(retString) - 1] = '\0';
 
 	/* append " } " and target node to retString */
-	strcat(retString, " } ");
+	strcat(retString, " } -> ");
+	sprintf(buffer, "%d", hEdge.targetNodes);
+	strcat(retString, buffer);
 
 } /* HyperEdge_toString */
 

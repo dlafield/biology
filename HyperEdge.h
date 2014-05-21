@@ -13,14 +13,10 @@
 #include <string.h>
 #endif
 
-#ifndef _HYPEREDGE_GUARD
-#define _HYPEREDGE_GUARD 1
-
-typedef struct
-{
-	char justification[100];
-    int active;
-} EdgeAnnotationType;
+#ifndef _ANNOTATION_TYPE_H_
+#define _ANNOTATION_TYPE_H_ 1
+#include "AnnotationType.h"
+#endif
 
 typedef struct
 {
@@ -40,5 +36,3 @@ int HyperEdge_definesEdge(int antecedent[], int consequent, int antecedentLength
 void HyperEdge_destroy(HyperEdgeType *hEdge);
 int HyperEdge_equals(HyperEdgeType a, HyperEdgeType b);
 void HyperEdge_toString(HyperEdgeType hEdge, char retString[]);
-
-#endif

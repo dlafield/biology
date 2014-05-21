@@ -18,22 +18,22 @@
 
 /*************************************************************************/
 
-int hyperGraphSize(HyperGraphType *g)
+int hyperGraphSize(HyperGraphType g)
 { 
 	/* returns number of vertices */
-	return AVL_Count(g->vertices);
+	return AVL_Count(g.vertices);
 }  /* hyper graph size */
 
 /*************************************************************************/
 
-int createHyperGraph(HyperGraphType *g)
+int createHyperGraph(HyperGraphType g)
 {
 	/* internal prototype declaration */
 	int hyperNodeCompareForCreate(void *a, void *b);
 
 	/* creates a new empty hypergraph */
-	g->vertices = AVL_Create(hyperNodeCompareForCreate, destroyHyperNode);
-	if(g->vertices == NULL)
+	g.vertices = AVL_Create(hyperNodeCompareForCreate, destroyHyperNode);
+	if(g.vertices == NULL)
 		return 0;
 	return 1;
 
@@ -51,11 +51,7 @@ int hyperNodeCompareForCreate(void *a, void *b)
 
 /*************************************************************************/
 
-/* get pebbler hypergraph *//***/
-
-/*************************************************************************/
-
-void *hyperGraphGetNode(HyperGraphType *h, HyperNodeType *x)
+void *hyperGraphGetNode(HyperGraphType h, HyperNodeType *x)
 {
 	/*
 		if there exists a node in h that matches x,
@@ -66,24 +62,24 @@ void *hyperGraphGetNode(HyperGraphType *h, HyperNodeType *x)
 		can also be used as as hasNode.  
 	*/
 
-	return AVL_Retrieve(h->vertices, x);
+	return AVL_Retrieve(h.vertices, x);
 } /* hyper graph get node */
 
 /*************************************************************************/
 
-int hyperGraphAddNode(HyperGraphType *h, HyperNodeType *x)
+int hyperGraphAddNode(HyperGraphType h, HyperNodeType *x)
 {
 	/*
 		adds x to h
 	*/
 	
-	return AVL_Insert(h->vertices, x);
+	return AVL_Insert(h.vertices, x);
 } /* hyper graph add node */
 
 /*************************************************************************/
 
 /* Has Local Forward Edge */
-int hyperGraphHasLocalForwardEdge(HyperGraphType *h, HyperEdgeType *e)
+int hyperGraphHasLocalForwardEdge(HyperGraphType h, HyperEdgeType *e)
 {
 	/*
 		Searches for e within the nodes in h
@@ -94,7 +90,7 @@ int hyperGraphHasLocalForwardEdge(HyperGraphType *h, HyperEdgeType *e)
 	/* internal prototype declaration */
 	void visitHasLocalForwardEdge(HyperNodeType *nodePtr, HyperEdgeType *vPtr, int *foundIt);
 	
-	AVL_traverse_int(h->vertices, visitHasLocalForwardEdge, e, &foundIt);
+	AVL_traverse_int(h.vertices, visitHasLocalForwardEdge, e, &foundIt);
 	return foundIt;
 } /* hyper graph has local forward edge */
 
@@ -125,7 +121,7 @@ void visitHasLocalForwardEdge(HyperNodeType *nodePtr, HyperEdgeType *vPtr, int *
 
 /*************************************************************************/
 
-int hyperGraphHasForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNodeCount, int targetNode)
+int hyperGraphHasForwardEdge(HyperGraphType h, int sourceNodes[], int sourceNodeCount, int targetNode)
 {
 	/*
 		searches for an edge defined by a many to one clause mapping within h
@@ -143,7 +139,7 @@ int hyperGraphHasForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNod
 	e.targetNodes = targetNode;
 	
 	/* traverse */
-	AVL_traverse_int(h->vertices, checkNodesForward, &e, &foundIt);
+	AVL_traverse_int(h.vertices, checkNodesForward, &e, &foundIt);
 	
 	return foundIt;
 
@@ -151,7 +147,7 @@ int hyperGraphHasForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNod
 
 /*************************************************************************/
 
-int hyperGraphGetNodeFromId(HyperGraphType *h, int id, HyperNodeType *n)
+int hyperGraphGetNodeFromId(HyperGraphType h, int id, HyperNodeType *n)
 {
 	/*	search for a node with a matching id in h
 		if found, let n be that node
@@ -161,14 +157,14 @@ int hyperGraphGetNodeFromId(HyperGraphType *h, int id, HyperNodeType *n)
 	HyperNodeType key;
 
 	key.id = id;
-	n = AVL_Retrieve(h->vertices, &key);
+	n = AVL_Retrieve(h.vertices, &key);
 	return (n != NULL);
 
 } /* hyper graph get node */
 
 /*************************************************************************/
 
-int hyperGraphAddForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNodeCount, int targetNode, EdgeAnnotationType annot)
+int hyperGraphAddForwardEdge(HyperGraphType h, int sourceNodes[], int sourceNodeCount, int targetNode, EdgeAnnotationType annot)
 {
 	int x;
 	HyperEdgeType *e;
@@ -215,7 +211,6 @@ int hyperGraphAddForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNod
 
 /*************************************************************************/
 
-/* check node */
 void checkNodesForward(HyperNodeType *currentNode, HyperEdgeType *edgeToCheck, int *foundIt)
 {
 	/* internal prototype declaration */
@@ -230,7 +225,6 @@ void checkNodesForward(HyperNodeType *currentNode, HyperEdgeType *edgeToCheck, i
 
 /*************************************************************************/
 
-/* check edge */
 void checkEdges(HyperEdgeType *currentEdge, HyperEdgeType *edgeToCheck, int *foundIt)
 {
 	if(!(*foundIt))

@@ -1,4 +1,4 @@
-/* a small change in the biology folder */
+/* small change */
 #ifndef _STDIO_H_
 #define _STDIO_H_ 1
 #include <stdio.h>
@@ -25,7 +25,7 @@
 #endif
 
 #ifndef _AVL_TYPE_H_
-#define _AVL_TYPE_H_1
+#define _AVL_TYPE_H_ 1
 #include "avl.h"
 #endif
 
@@ -41,9 +41,13 @@ enum eFileSources
 
 /****************************************************************************************/
 
-int compareAtoms(atomType *a, atomType *b);
-int compareBonds(bondType *a, bondType *b);
-int compareMolecules(moleculeType *a, moleculeType *b);
+int compareAtoms(void *a, void *b);
+int compareAtomsForCreate(atomType *a, atomType *b);
+int compareBonds(void *a, void *b);
+int compareBondsForCreate(bondType *a, bondType *b);
+int compareMolecules(void *a, void *b);
+int compareMoleculesForCreate(moleculeType *a, moleculeType *b);
+void genericDestroyerFunction(void *x);
 int getAtoms(FILE *f, int *numberOfAtoms, int *numberOfBonds, int *numberOfMolecules, enum eFileSources fSource);
 int getBonds(FILE *f, int *numberOfAtoms, int *numberOfBonds, int *numberOfMolecules, enum eFileSources fSource);
 int getMolecules(FILE *f, int *numberOfAtoms, int *numberOfBonds, int *numberOfMolecules, enum eFileSources fSource);
@@ -59,8 +63,8 @@ int main(void)
 	FILE *currentFile;
 	FILE *f;
 	//AVL_TREE *decoyAtoms;
-	AVL_TREE *crystalAtoms;
 	//AVL_TREE *activeAtoms;
+	AVL_TREE *crystalAtoms;
 	AVL_TREE *crystalBonds;
 	AVL_TREE *crystalMolecules;
 
@@ -81,9 +85,9 @@ int main(void)
 		f = fopen("decoys_final.mol2", "r");
 
 		/* create crystals */
-		crystalAtoms = AVL_Create(compareAtoms);
-		crystalBonds = AVL_Create(compareBonds);
-		crystalMolecules = AVL_Create(compareMolecules);
+		crystalAtoms = AVL_Create(compareAtoms, genericDestroyerFunction);
+		crystalBonds = AVL_Create(compareBonds, genericDestroyerFunction);
+		crystalMolecules = AVL_Create(compareMolecules, genericDestroyerFunction);
 
 		/* read first line in file */
 		fscanf(f, " %[^\n]", buffer);
@@ -608,7 +612,7 @@ void readFile(FILE *f, int *numberOfAtoms, int *numberOfBonds, int *numberOfMole
 
 /****************************************************************************************/
 
-int compareAtoms(atomType *a, atomType *b)
+int compareAtomsForCreate(atomType *a, atomType *b)
 {
 	if(a->id == b->id)
 	{
@@ -625,7 +629,7 @@ int compareAtoms(atomType *a, atomType *b)
 
 /****************************************************************************************/
 
-int compareBonds(bondType *a, bondType *b)
+int compareBondsForCreate(bondType *a, bondType *b)
 {
 	if(a->id == b->id)
 		return 0;
@@ -636,7 +640,7 @@ int compareBonds(bondType *a, bondType *b)
 
 /****************************************************************************************/
 
-int compareMolecules(moleculeType *a, moleculeType *b)
+int compareMoleculesForCreate(moleculeType *a, moleculeType *b)
 {
 	/*
 	if(strcmp(a->name, b->name) > 0)
@@ -667,6 +671,46 @@ void visitAtom(atomType *a)
 	if(a->id % 10 == 0)
 		printf("\n");
 		*/
+}
+
+/****************************************************************************************/
+
+void genericDestroyerFunction(void *x)
+{
+	return;
+} 
+
+/****************************************************************************************/
+
+int compareAtoms(void *a, void *b)
+{
+	atomType *x, *y;
+
+	x = a;
+	y = b;
+	return compareAtomsForCreate(x, y);
+}
+
+/****************************************************************************************/
+
+int compareBonds(void *a, void *b)
+{
+	bondType *x, *y;
+
+	x = a;
+	y = b;
+	return compareBondsForCreate(x, y);
+}
+
+/****************************************************************************************/
+
+int compareMolecules(void *a, void *b)
+{
+	moleculeType *x, *y;
+
+	x = a;
+	y = b;
+	return compareMoleculesForCreate(x, y);
 }
 
 /****************************************************************************************/

@@ -28,10 +28,10 @@ typedef struct
 /*************************************************************************/
 
 /* prototypes */
-int createHyperGraph(HyperGraphType *g);
-int hyperGraphAddForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNodeCount, int targetNode, EdgeAnnotationType annot);
-int hyperGraphAddNode(HyperGraphType *h, HyperNodeType *x);
-void *hyperGraphGetNode(HyperGraphType *h, HyperNodeType *x);
-int hyperGraphGetNodeFromId(HyperGraphType *h, int id, HyperNodeType *n);
-int hyperGraphHasForwardEdge(HyperGraphType *h, int sourceNodes[], int sourceNodeCount, int targetNode);
-int hyperGraphSize(HyperGraphType *g);
+int createHyperGraph(HyperGraphType g);
+int hyperGraphAddForwardEdge(HyperGraphType h, int sourceNodes[], int sourceNodeCount, int targetNode, EdgeAnnotationType annot);
+int hyperGraphAddNode(HyperGraphType h, HyperNodeType *x);
+void *hyperGraphGetNode(HyperGraphType h, HyperNodeType *x);
+int hyperGraphGetNodeFromId(HyperGraphType h, int id, HyperNodeType *n);
+int hyperGraphHasForwardEdge(HyperGraphType h, int sourceNodes[], int sourceNodeCount, int targetNode);
+int hyperGraphSize(HyperGraphType g);

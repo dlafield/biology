@@ -68,14 +68,15 @@ int createHyperNode(void *data, int id, HyperNodeType *hNode)
 
 	/* internal prototype declaration */
 	int compareHyperEdges(void *argu1, void *argu2);
+	void destroyEdges(void *v);
 
 	/* create forward edges */
-	hNode->forwardEdges = AVL_Create(compareHyperEdges);
+	hNode->forwardEdges = AVL_Create(compareHyperEdges, destroyEdges);
 	if(hNode->forwardEdges == NULL)
 		return 0;
 
 	/* create backward edges */
-	hNode->backwardEdges = AVL_Create(compareHyperEdges);
+	hNode->backwardEdges = AVL_Create(compareHyperEdges, destroyEdges);
 	if(hNode->backwardEdges  == NULL)
 	{
 		hNode->forwardEdges = AVL_Destroy(hNode->forwardEdges);
@@ -205,6 +206,12 @@ void edgeStringAppend(HyperEdgeType *dataPtr, char stringInVisit[])
 } /* edge string append */
 
 /*************************************************************************/
+
+void destroyEdges(void *v)
+{
+	return;
+}
+
 /*************************************************************************/
 /*************************************************************************/
 /*************************************************************************/
