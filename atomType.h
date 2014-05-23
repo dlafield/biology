@@ -24,6 +24,8 @@ typedef struct
 	int id, subst_id, statusBit;
 	char name[10], typeOfAtom[10], subst_name[10];
 	float x, y, z, charge;
+	int maxNumberOfContacts;
+	char contactAtomType[10];
 } atomType;
 
 /****************************************************************************************/
