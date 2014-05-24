@@ -2,6 +2,7 @@
 #include <vector>
 
 #include "Molecule.h"
+#include "Atoms.h"
 
 #include "EdgeAggregator.h"
 
@@ -158,10 +159,58 @@ int Molecule::Parse(char moleculeName[], char moleculeStats[], char typeOfMolecu
 
 /****************************************************************************************/
 
-std::vector<EdgeAggregator> Molecule::Compose(const Molecule& thatMolecule)
+std::vector<EdgeAggregator> Molecule::Compose(const Molecule& thatMolecule, int thisAtomId, int thatAtomId)
 {
+	int atomOffset;
+	int bondOffset;
+	int atomIndex, bondIndex;
+	Atoms transA;
+	Bonds transB, newBond;
     std::vector<EdgeAggregator> newMolecules;
     
+	/* set atom offset to size of this molecule's atoms */
+	atomOffset = this.atoms.size();
+
+	/* set bond offset to size of this molecule's bonds */
+	bondOffset = this.bonds.size();
+
+	for(atomIndex = 0; atomIndex < atomOffset; atomIndex++)
+	{ /* for each atom a in that molecule */
+
+		/* add atom offset to a */
+		transA = thatMolecule.atoms.at(atomIndex);
+		transA.id += atomOffset;
+		
+		/* ISSUE -- How to handle atom coordinants in that are in that molecule?  What about the angle that the new molecule comes in at? */
+
+		/* push a onto this molecule's atoms */
+		this.atoms.push_back(transA);
+
+	} /* for each atom a in that molecule */
+
+	for(bondIndex = 0; bondIndex < bondOffset; bondIndex++)
+	{ /* for each bond b in that molecule */
+
+		/* add bond offset to b */
+		transB = thatMolecule.bonds.at(bondIndex);
+		transB.id += bondOffset;
+
+		/* push b onto this molecule's bonds */
+		this.bonds.push_back(transB);
+
+	}/* for each bond b in that molecule */
+
+	/* add new bond to this molecule's bonds */
+	newBond = new Bond();
+	newBond.id = this.bonds.size();
+	newBond.originAtomID = thisAtomId;
+	newBond.targetAtomID = thatAtomId;
+
+	/* ISSUE -- what is the typeOfBond for this new bond? */
+	/* ISSUE -- what is the statusBit for this new bond? */
+
+	this.bonds.push_back(newBond);
+
     return newMolecules;
 }
 

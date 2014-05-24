@@ -73,7 +73,6 @@ AVL_NODE *AVL__insert(AVL_TREE *tree, AVL_NODE *root, AVL_NODE *newPtr, int *tal
     AVL_NODE *AVL_leftBalance (AVL_NODE *root, int *taller);
     AVL_NODE *AVL_rightBalance (AVL_NODE *root, int *taller);
 
-	
     if(!root)
     { /* if the current node is null, then insert new node here */
 
@@ -82,7 +81,6 @@ AVL_NODE *AVL__insert(AVL_TREE *tree, AVL_NODE *root, AVL_NODE *newPtr, int *tal
         return root;
 
     } /* if the current node is null, then insert new node here */
-
 
     if(tree->compare(newPtr->dataPtr, root->dataPtr) < 0)
     { /* if the new node belongs to the left child of the current node */
@@ -811,4 +809,183 @@ void AVL__traversal_int(AVL_NODE *root, void(*process)(void *dataPtr, void *auxP
 } /* AVL__traversal_string */
 
 /*************************************************************************/
+
+int AVL_AddLeft(AVL_TREE *tree, void *dataPtr)
+{
+	AVL_NODE *newPtr, *curPtr, *prevPtr;
+    int taller, hadToBalance = 0;
+
+	/* internal prototype declaration */
+    AVL_NODE *AVL_leftBalance (AVL_NODE *root, int *taller);
+
+	/* allocates memory for a new pointer */
+	newPtr = (AVL_NODE *)malloc(sizeof(AVL_NODE));
+    if(!newPtr)
+        return FALSE;
+
+	/* a new node is always evenly balanced, and has nulls for left and right child */
+    newPtr->bal = EH;
+    newPtr->right = NULL;
+    newPtr->left = NULL;
+
+	/* put data into new node */
+    newPtr->dataPtr = dataPtr;
+
+	if(!(tree->root))
+	{ /* if the current node is null, then insert new node here */
+
+		tree->root = newPtr;
+        taller = TRUE;
+		return TRUE;
+
+	} /* if the current node is null, then insert new node here */
+
+	/* find place for new node */
+	curPtr = tree->root;
+	while(curPtr->left != NULL)
+		curPtr = curPtr->left;
+
+	/* insert node */
+	curPtr->left = newPtr;
+
+	while(!hadToBalance && curPtr != tree->root)
+	{ /* work your way back up to the root or balance done */
+
+		if(taller)
+			switch(curPtr->bal)
+			{
+				case LH:	//if the current node was already left heavy, then balance the node
+					hadToBalance = 1;
+					curPtr = AVL_leftBalance(curPtr, &taller);
+					break;
+				case EH:	//if the current node was evenly balanced before, then it is now left heavy
+					curPtr->bal = LH;
+					break;
+				case RH: //if the current node was right heavy before, then it is now evenly balanced, and the tree is not taller
+					curPtr->bal = EH;
+					taller = FALSE;
+					break;
+			} /* switch current balance */
+
+		/* find parent of curPtr */
+		prevPtr = tree->root;
+		while(prevPtr->left != curPtr)
+			prevPtr = prevPtr->left;
+		curPtr = prevPtr;
+
+	} /* work your way back up to the root or balance done */
+
+	/* balance root, if necessary */
+	if(taller && !hadToBalance)
+		switch(curPtr->bal)
+		{
+			case LH:	//if the current node was already left heavy, then balance the node
+				curPtr = AVL_leftBalance(curPtr, &taller);
+				break;
+			case EH:	//if the current node was evenly balanced before, then it is now left heavy
+				curPtr->bal = LH;
+				break;
+			case RH: //if the current node was right heavy before, then it is now evenly balanced, and the tree is not taller
+				curPtr->bal = EH;
+				taller = FALSE;
+				break;
+		} /* switch current balance */
+
+	/* increment number of nodes in the tree */
+    (tree->count)++;
+
+    return TRUE;
+
+} /* AVL_AddLeft */
+
+/*************************************************************************/
+
+int AVL_AddRight(AVL_TREE *tree, void *dataPtr)
+{
+	AVL_NODE *newPtr, *curPtr, *prevPtr;
+    int taller, hadToBalance = 0;
+
+	/* internal prototype declaration */
+	AVL_NODE *AVL_rightBalance (AVL_NODE *root, int *taller);
+
+	/* allocates memory for a new pointer */
+	newPtr = (AVL_NODE *)malloc(sizeof(AVL_NODE));
+    if(!newPtr)
+        return FALSE;
+
+	/* a new node is always evenly balanced, and has nulls for left and right child */
+    newPtr->bal = EH;
+    newPtr->right = NULL;
+    newPtr->left = NULL;
+
+	/* put data into new node */
+    newPtr->dataPtr = dataPtr;
+
+	if(!(tree->root))
+	{ /* if the current node is null, then insert new node here */
+
+		tree->root = newPtr;
+        taller = TRUE;
+		return TRUE;
+
+	} /* if the current node is null, then insert new node here */
+
+	/* find place for new node */
+	curPtr = tree->root;
+	while(curPtr->right != NULL)
+		curPtr = curPtr->right;
+
+	/* insert node */
+	curPtr->right = newPtr;
+
+	while(!hadToBalance && curPtr != tree->root)
+	{ /* work your way back up to the root or balance done */
+
+		if(taller)
+			switch(curPtr->bal)
+			{
+				case LH:	//if the current node was left heavy before, then it is now evenly balanced, and the tree is not taller
+					curPtr->bal = EH;
+                    taller = FALSE;
+                    break;
+                case EH:	//if the current node was evenly balanced before, then it is now right heavy
+                    curPtr->bal = RH;
+                    break;
+                case RH:	//if the current node was already right heavy, then balance the node
+					hadToBalance = 1;
+                    curPtr = AVL_rightBalance(curPtr, &taller);
+                    break;
+			} /* switch current balance */
+
+		/* find parent of curPtr */
+		prevPtr = tree->root;
+		while(prevPtr->right != curPtr)
+			prevPtr = prevPtr->right;
+		curPtr = prevPtr;
+
+	} /* work your way back up to the root or balance done */
+
+	/* balance root, if necessary */
+	if(taller && !hadToBalance)
+		switch(curPtr->bal)
+		{
+			case LH:	//if the current node was already left heavy, then balance the node
+				curPtr = AVL_leftBalance(curPtr, &taller);
+				break;
+			case EH:	//if the current node was evenly balanced before, then it is now left heavy
+				curPtr->bal = LH;
+				break;
+			case RH: //if the current node was right heavy before, then it is now evenly balanced, and the tree is not taller
+				curPtr->bal = EH;
+				taller = FALSE;
+				break;
+		} /* switch current balance */
+
+	/* increment number of nodes in the tree */
+    (tree->count)++;
+
+    return TRUE;
+
+} /* AVL_AddRight */
+
 /*************************************************************************/

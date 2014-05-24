@@ -37,6 +37,8 @@ typedef struct
 /*************************************************************************/
 
 /* prototypes */
+int AVL_AddLeft(AVL_TREE *tree, void *dataPtr);
+int AVL_AddRight(AVL_TREE *tree, void *dataPtr);
 int AVL_Count(AVL_TREE *tree);
 AVL_TREE *AVL_Create(int (*compare) (void *argu1, void *argu2), void (*destroyPtr)(void *dataPtr));
 int AVL_Delete (AVL_TREE *tree, void *dltKey);

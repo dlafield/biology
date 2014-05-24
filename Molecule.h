@@ -5,6 +5,8 @@
 #include <vector>
 
 class EdgeAggregator;
+class Atoms;
+class Bonds;
 
 typedef enum
 {
@@ -55,6 +57,8 @@ class Molecule
     eStatusBitT statusBits;
 	 std::string name;
     std::string comments;
+	std::vector<Atoms> atoms;
+	std::vector<Bonds> bonds;
 
     Molecule() {}
     ~Molecule() {}
