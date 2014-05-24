@@ -12,6 +12,8 @@ class Linker : public Molecule
     Linker() {}
     ~Linker() {}
 
+	std::parse (FILE *f, int id);
+
     std::vector<EdgeAggregator> Compose(const Molecule&);
     bool Equals(const Molecule&) const;
 
