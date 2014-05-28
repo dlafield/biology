@@ -1,0 +1,22 @@
+crystal:
+59 atoms
+62 bonds
+1 molecule
+
+
+decoys:
+379,982 atoms
+397,560 bonds
+6,952 molecules
+
+
+actives:
+11,420 atoms
+12,237 bonds
+190 molecules
+
+
+totals:
+391,462 atoms
+409,859 bonds
+7,143 molecules
