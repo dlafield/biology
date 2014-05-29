@@ -3,27 +3,16 @@
 
 using namespace std;
 
-#include moleculeClass.h
-
-extern "C"
-{
-	typedef struct
-	{
-		int id, maxNumOfContacts;
-	} maxNumOfContactsPair;
-}
+#include MoleculeEdge.h
+#include LinkerNode.h
 
 class LinkerClass: public MoleculeClass 
 {
 	public:
-		addMaxContact(int id, int maxNumOfContacts)
-		{
-			maxNumOfContactsPair x;
-			x.id = id;
-			x.maxNumOfContacts = maxNumOfContacts;
-			maxNumOfContacts.push_back(x);
-		}
-	private:
-		vector<int> maxNumOfContacts;
+		/* add atom */
+		/* add bond */
 
+
+	protected:
+		vector<LinkerNode> atoms;
 } 
